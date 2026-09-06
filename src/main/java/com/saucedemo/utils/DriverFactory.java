@@ -1,34 +1,41 @@
 package com.saucedemo.utils;
 
+import java.io.File;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 public class DriverFactory {
 
-    private static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<>();
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
 
-    public static void initDriver(String browser) {
+    public static void initializeDriver(String browser) {
+
         if (browser == null || browser.equalsIgnoreCase("chrome")) {
-            System.setProperty("webdriver.chrome.driver", ConfigReader.getProperty("driver.path"));
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*");
-            tlDriver.set(new ChromeDriver(options));
-        } else {
-            throw new IllegalArgumentException("Unsupported browser: " + browser);
-        }
 
-        getDriver().manage().window().maximize();
+            String driverPath = ConfigReader.getProperty("driver.path");
+
+            File driverFile = new File(driverPath);
+
+            System.setProperty("webdriver.chrome.driver",
+                    driverFile.getAbsolutePath());
+
+            driver.set(new ChromeDriver());
+
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported browser: " + browser);
+        }
     }
 
     public static WebDriver getDriver() {
-        return tlDriver.get();
+        return driver.get();
     }
 
     public static void quitDriver() {
-        if (tlDriver.get() != null) {
-            tlDriver.get().quit();
-            tlDriver.remove();
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove();
         }
     }
 }

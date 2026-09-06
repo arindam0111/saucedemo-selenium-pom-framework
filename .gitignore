@@ -8,3 +8,5 @@ test-output/
 screenshots/
 *.log
 .DS_Store
+# Browser drivers
+drivers/*.exe

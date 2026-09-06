@@ -13,7 +13,7 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() {
         String browser = ConfigReader.getProperty("browser");
-        DriverFactory.initDriver(browser);
+        DriverFactory.initializeDriver(browser);
         DriverFactory.getDriver().get(ConfigReader.getProperty("url"));
     }
 

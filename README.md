@@ -14,6 +14,42 @@ An enterprise-grade UI test automation framework built using **Selenium WebDrive
 * **Driver Management**: ThreadLocal `DriverFactory` (Parallel-ready)
 
 ---
+## 🌐 Browser Driver Setup
+
+This framework currently uses **Google Chrome** with a project-relative ChromeDriver configuration.
+
+### Prerequisites
+
+Before running the tests, ensure the following are installed:
+
+* **Java 8**
+* **Apache Maven**
+* **Google Chrome**
+* **Eclipse IDE** or any Java IDE
+
+### ChromeDriver Setup
+
+1. Download the ChromeDriver version compatible with your installed Google Chrome version.
+2. Place the `chromedriver.exe` file inside the following project directory:
+
+```text
+drivers/
+└── chromedriver.exe
+
+---
+
+## ▶️ How to Run Tests
+
+### Option 1: Run from Eclipse
+
+1. Import the project as a Maven project.
+2. Ensure the required dependencies are downloaded successfully.
+3. Verify the ChromeDriver configuration in `config.properties`.
+4. Right-click the required TestNG test class.
+5. Select:
+
+```text
+Run As → TestNG Test
 
 ## 🏛️ Framework Architecture
 
@@ -27,19 +63,42 @@ An enterprise-grade UI test automation framework built using **Selenium WebDrive
 
 ## 📂 Project Structure
 
+## 📂 Project Structure
+
 ```text
 Selenium/
 ├── src/
-│   ├── main/java/
-│   │   └── com/saucedemo/
-│   │       ├── pages/          # Page Objects (BasePage, LoginPage, ProductsPage, CartPage, CheckoutPage)
-│   │       └── utils/          # ConfigReader, DriverFactory, ScreenshotUtils
-│   └── test/java/
-│       └── com/saucedemo/
-│           ├── base/           # BaseTest, TestListener
-│           └── tests/          # Functional, Negative, and E2E Tests
-│   └── test/resources/
-│       └── config.properties   # Environment configurations
-├── testng.xml                  # Suite runner & listener hooks
-├── pom.xml                     # Maven dependencies & build lifecycle
+│   ├── main/
+│   │   └── java/
+│   │       └── com/saucedemo/
+│   │           ├── pages/
+│   │           │   ├── BasePage.java
+│   │           │   ├── LoginPage.java
+│   │           │   ├── ProductsPage.java
+│   │           │   ├── CartPage.java
+│   │           │   └── CheckoutPage.java
+│   │           └── utils/
+│   │               ├── ConfigReader.java
+│   │               ├── DriverFactory.java
+│   │               └── ScreenshotUtils.java
+│   │
+│   └── test/
+│       ├── java/
+│       │   └── com/saucedemo/
+│       │       ├── base/
+│       │       │   ├── BaseTest.java
+│       │       │   └── TestListener.java
+│       │       └── tests/
+│       │           ├── LoginTest.java
+│       │           ├── LoginSmokeTest.java
+│       │           └── EndToEndPurchaseTest.java
+│       │
+│       └── resources/
+│           └── config.properties
+│
+├── drivers/
+│   └── chromedriver.exe        # Local only; excluded from Git
+├── testng.xml
+├── pom.xml
+├── .gitignore
 └── README.md
