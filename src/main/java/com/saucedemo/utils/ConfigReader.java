@@ -21,9 +21,28 @@ public class ConfigReader {
 
     public static String getProperty(String key) {
         String value = properties.getProperty(key);
+
         if (value == null) {
-            throw new RuntimeException("Property key '" + key + "' not found in config.properties");
+            throw new RuntimeException(
+                    "Property key '" + key + "' not found in config.properties"
+            );
         }
+
         return value.trim();
+    }
+
+    public static int getIntProperty(String key) {
+        String value = getProperty(key);
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(
+                    "Property '" + key +
+                    "' must be a valid integer. Current value: " +
+                    value,
+                    e
+            );
+        }
     }
 }

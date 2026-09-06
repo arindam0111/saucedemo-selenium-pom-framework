@@ -1,5 +1,6 @@
 package com.saucedemo.pages;
 
+import com.saucedemo.utils.ConfigReader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -14,17 +15,27 @@ public class BasePage {
     protected WebDriverWait wait;
 
     public BasePage(WebDriver driver) {
+
         this.driver = driver;
-        // 10-second explicit wait timeout for Selenium 4
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        int explicitWait = ConfigReader.getIntProperty("explicit.wait");
+
+        this.wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(explicitWait)
+        );
     }
 
     protected WebElement waitForVisibility(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        return wait.until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
     }
 
     protected WebElement waitForClickable(By locator) {
-        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+        return wait.until(
+                ExpectedConditions.elementToBeClickable(locator)
+        );
     }
 
     public void click(By locator) {
