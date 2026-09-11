@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 public class LoginSmokeTest extends BaseTest {
 
-    @Test
+    @Test(groups = "smoke")
     public void verifyAppTitle() {
         String actualTitle = getDriver().getTitle();
         System.out.println("SauceDemo Loaded Title: " + actualTitle);

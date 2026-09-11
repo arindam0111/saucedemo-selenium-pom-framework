@@ -45,7 +45,10 @@ public class BasePage {
     public void enterText(By locator, String text) {
         WebElement element = waitForVisibility(locator);
         element.clear();
-        element.sendKeys(text);
+
+        if (text != null && !text.isEmpty()) {
+            element.sendKeys(text);
+        }
     }
 
     public String getText(By locator) {

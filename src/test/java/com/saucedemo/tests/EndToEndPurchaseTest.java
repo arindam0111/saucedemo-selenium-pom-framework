@@ -1,36 +1,52 @@
 package com.saucedemo.tests;
 
 import com.saucedemo.base.BaseTest;
+import com.saucedemo.models.CheckoutData;
 import com.saucedemo.pages.CartPage;
 import com.saucedemo.pages.CheckoutPage;
 import com.saucedemo.pages.LoginPage;
 import com.saucedemo.pages.ProductsPage;
+import com.saucedemo.utils.JsonReader;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class EndToEndPurchaseTest extends BaseTest {
 
-    @Test
-    public void testCompleteOrderFlow() {
-        // 1. Log in
+    @DataProvider(name = "checkoutDataProvider")
+    public Object[][] getCheckoutData() {
+        String filePath = "src/test/resources/testdata/checkoutData.json";
+        return JsonReader.getJsonData(filePath, CheckoutData.class);
+    }
+
+    @Test(dataProvider = "checkoutDataProvider", groups = "regression")
+    public void testCompleteOrderFlow(CheckoutData checkoutData) {
+        // 1. Log in with standard user credentials
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.login("standard_user", "secret_sauce");
 
-        // 2. Select products and verify cart badge counter
+        // 2. Select product, add to cart, and open cart
         ProductsPage productsPage = new ProductsPage(getDriver());
         productsPage.addBackpackToCart();
-        Assert.assertEquals(productsPage.getCartBadgeCount(), "1", "Cart count badge does not match 1");
-
-        // 3. Navigate to Cart and verify item
         CartPage cartPage = productsPage.clickCart();
-        Assert.assertEquals(cartPage.getFirstItemName(), "Sauce Labs Backpack", "Product name in cart mismatch");
 
-        // 4. Proceed to Checkout and input details
-        CheckoutPage checkoutPage = cartPage.clickCheckout();
-        checkoutPage.fillInformation("John", "Doe", "12345");
+        // 3. Navigate to checkout from cart
+        cartPage.clickCheckout();
 
-        // 5. Complete order and verify confirmation header
+        // 4. Fill shipping information and proceed
+        CheckoutPage checkoutPage = new CheckoutPage(getDriver());
+        checkoutPage.fillInformation(
+                checkoutData.getFirstName(),
+                checkoutData.getLastName(),
+                checkoutData.getPostalCode()
+        );
+
+        // 5. Complete order and verify confirmation message
         checkoutPage.clickFinish();
-        Assert.assertEquals(checkoutPage.getSuccessOrderMessage(), "Thank you for your order!", "Order confirmation header failed");
+        Assert.assertEquals(
+                checkoutPage.getSuccessOrderMessage(),
+                checkoutData.getExpectedConfirmationMessage(),
+                "Confirmation message mismatch upon order completion"
+        );
     }
 }

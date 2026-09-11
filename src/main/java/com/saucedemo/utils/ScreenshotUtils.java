@@ -7,30 +7,33 @@ import org.openqa.selenium.WebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ScreenshotUtils {
 
     public static String captureScreenshot(WebDriver driver, String testName) {
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String screenshotName = testName + "_" + timestamp + ".png";
-        String destinationDirectory = System.getProperty("user.dir") + "/screenshots/";
-        
-        File directory = new File(destinationDirectory);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        if (driver == null) {
+            return null;
         }
 
-        File source = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        File destination = new File(destinationDirectory + screenshotName);
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String directoryPath = System.getProperty("user.dir") + File.separator + "screenshots";
+        String filePath = directoryPath + File.separator + testName + "_" + timestamp + ".png";
 
         try {
-            Files.copy(source.toPath(), destination.toPath());
-        } catch (IOException e) {
-            System.err.println("Failed to save screenshot: " + e.getMessage());
-        }
+            File dir = new File(directoryPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
 
-        return destination.getAbsolutePath();
+            File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+            Files.copy(srcFile.toPath(), Paths.get(filePath));
+            return filePath;
+        } catch (IOException e) {
+            System.err.println("Failed to capture screenshot: " + e.getMessage());
+            return null;
+        }
     }
 }

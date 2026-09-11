@@ -20,6 +20,13 @@ public class ConfigReader {
     }
 
     public static String getProperty(String key) {
+
+        String systemProperty = System.getProperty(key);
+
+        if (systemProperty != null && !systemProperty.trim().isEmpty()) {
+            return systemProperty.trim();
+        }
+
         String value = properties.getProperty(key);
 
         if (value == null) {
@@ -44,5 +51,20 @@ public class ConfigReader {
                     e
             );
         }
+    }
+    public static boolean getBooleanProperty(String key) {
+        String value = getProperty(key);
+
+        if (!value.equalsIgnoreCase("true") &&
+            !value.equalsIgnoreCase("false")) {
+
+            throw new RuntimeException(
+                    "Property '" + key +
+                    "' must be either true or false. Current value: " +
+                    value
+            );
+        }
+
+        return Boolean.parseBoolean(value);
     }
 }

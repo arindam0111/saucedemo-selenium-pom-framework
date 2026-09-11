@@ -1,8 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>Selenium</groupId>
     <artifactId>Selenium</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <!-- Default to empty so normal runs without -Dgroups do not fail -->
+        <groups></groups>
+        <!-- Allows overriding suites via CLI if needed -->
+        <suiteXmlFile>testng.xml</suiteXmlFile>
+    </properties>
 
     <dependencies>
         <!-- Selenium Java -->
@@ -19,16 +28,43 @@
             <version>6.9.10</version>
             <scope>test</scope>
         </dependency>
+        <!-- Jackson Databind for JSON parsing -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.13.3</version>
+		</dependency>
+		    <!-- ExtentReports for Rich HTML Reporting (Java 8 compatible) -->
+	<dependency>
+	    <groupId>com.aventstack</groupId>
+	    <artifactId>extentreports</artifactId>
+	    <version>5.0.9</version>
+	</dependency>
     </dependencies>
+
 
     <build>
         <plugins>
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${suiteXmlFile}</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <groups>${groups}</groups>
                 </configuration>
             </plugin>
         </plugins>

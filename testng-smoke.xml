@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="SauceDemo Smoke Suite" verbose="1">
+
+    <listeners>
+        <listener class-name="com.saucedemo.base.TestListener" />
+    </listeners>
+
+    <test name="Smoke Tests">
+        <classes>
+            <class name="com.saucedemo.tests.LoginSmokeTest" />
+            <class name="com.saucedemo.tests.LoginTest" />
+        </classes>
+    </test>
+
+</suite>
