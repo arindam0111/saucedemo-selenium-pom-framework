@@ -1,33 +1,38 @@
 # SauceDemo Selenium Test Automation Framework
 
-A scalable and maintainable UI test automation framework for the [SauceDemo](https://www.saucedemo.com/) e-commerce application, built using **Selenium WebDriver, Java, TestNG, and Maven**.
+A maintainable **UI test automation framework** for the [SauceDemo](https://www.saucedemo.com/) e-commerce application, built using **Selenium WebDriver, Java, TestNG, and Maven**.
 
-The framework follows the **Page Object Model (POM)** design pattern and demonstrates practical automation framework concepts including reusable page components, configurable explicit waits, centralized configuration, thread-safe WebDriver management, data-driven testing, TestNG listeners, and automatic screenshots on test failure.
+The framework follows the **Page Object Model (POM)** design pattern and demonstrates practical automation framework concepts including reusable page objects, explicit waits, centralized configuration, thread-safe WebDriver management, data-driven testing, failure screenshots, TestNG listeners, and headless execution.
 
 ---
 
 ## 🚀 Key Features
 
-* **Page Object Model (POM)** for maintainable and reusable page objects
-* **Selenium WebDriver** for browser automation
-* **TestNG** for test execution, assertions, and test organization
-* **Maven** for dependency and build management
-* **Configurable explicit waits** through `config.properties`
-* **Centralized configuration management** using `ConfigReader`
-* **ThreadLocal WebDriver** management for thread-safe driver handling
-* **Data-driven testing** using TestNG `@DataProvider`
-* **Reusable Selenium actions** through `BasePage`
-* **Automatic screenshots on test failure**
-* **TestNG listener** for test execution and failure handling
-* Separate **smoke, negative, and end-to-end test scenarios**
-* **TestNG XML suite** for organized regression execution
-* Clean separation between test classes, page objects, framework utilities, and configuration
+* Page Object Model (POM)
+* Selenium WebDriver
+* Java 8 compatible implementation
+* TestNG test execution
+* Maven build and dependency management
+* Configurable explicit waits
+* Centralized framework configuration
+* ThreadLocal WebDriver management
+* Data-driven testing using TestNG `@DataProvider`
+* Reusable Selenium actions through `BasePage`
+* Automatic screenshots on test failure
+* TestNG listener for failure handling
+* Smoke testing
+* Negative testing
+* End-to-end purchase flow
+* Headless browser execution
+* TestNG XML suites
+* Maven command-line execution
+* Clean separation between tests, page objects, utilities, and configuration
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology         | Version / Usage               |
+| Technology         | Usage                         |
 | ------------------ | ----------------------------- |
 | Java               | 8                             |
 | Selenium WebDriver | 4.3.0                         |
@@ -37,15 +42,14 @@ The framework follows the **Page Object Model (POM)** design pattern and demonst
 | Git                | Version control               |
 | GitHub             | Source code repository        |
 
+> **Compatibility note:** The project uses Java 8 and Selenium 4.3.0 to maintain compatibility with the development environment used for this project.
+
 ---
 
 ## 📁 Project Structure
 
 ```text
 saucedemo-selenium-pom-framework/
-│
-├── drivers/
-│   └── chromedriver.exe
 │
 ├── src/
 │   ├── main/
@@ -82,61 +86,60 @@ saucedemo-selenium-pom-framework/
 │   │
 │   └── ...
 │
+├── reports/
 ├── testng.xml
+├── testng-smoke.xml
+├── testng-regression.xml
 ├── pom.xml
 ├── .gitignore
 └── README.md
 ```
 
-> **Note:** The `drivers/` directory is intended for local driver files and should remain excluded from version control when configured in `.gitignore`.
+> Browser driver binaries are intended for local execution and should remain excluded from version control where appropriate.
 
 ---
 
 # 🏗️ Framework Architecture
 
-The framework follows a layered structure to keep test scenarios separate from page interactions and framework utilities.
+The framework follows a layered structure that separates test scenarios, browser management, page interactions, and reusable utilities.
 
 ```text
                     TestNG Test Classes
-                           │
-                           ▼
-                       BaseTest
-                           │
-                           ▼
-                     DriverFactory
-                           │
-                           ▼
+                            │
+                            ▼
+                        BaseTest
+                            │
+                            ▼
+                      DriverFactory
+                            │
+                            ▼
                     Selenium WebDriver
-                           │
-                           ▼
-                      Page Objects
-                           │
-                           ▼
-                       BasePage
-                           │
-                           ▼
+                            │
+                            ▼
+                       Page Objects
+                            │
+                            ▼
+                        BasePage
+                            │
+                            ▼
                   Reusable Web Actions
 ```
 
-## Main Components
-
-### `BaseTest`
+### BaseTest
 
 Provides common test setup and teardown functionality.
 
 Responsibilities include:
 
-* Reading browser and application URL from configuration
-* Initializing the WebDriver
+* Reading framework configuration
+* Initializing WebDriver
 * Opening the application
-* Providing access to the current WebDriver instance
-* Closing the browser after each test
+* Providing access to the current driver
+* Closing the browser after test execution
 
----
+### DriverFactory
 
-### `DriverFactory`
-
-Responsible for WebDriver lifecycle management.
+Manages WebDriver lifecycle.
 
 The framework uses:
 
@@ -144,15 +147,13 @@ The framework uses:
 ThreadLocal<WebDriver>
 ```
 
-to maintain a separate WebDriver instance per execution thread.
+to maintain an independent WebDriver instance for each execution thread.
 
-This provides a foundation for safe parallel execution when parallel execution is introduced into the TestNG configuration.
+This provides a foundation for future parallel execution.
 
----
+### BasePage
 
-### `BasePage`
-
-Provides reusable Selenium operations used by page objects.
+Contains reusable Selenium operations used by page objects.
 
 Examples include:
 
@@ -163,27 +164,9 @@ Examples include:
 * Retrieving element text
 * Checking element visibility
 
-Explicit waits are configured through:
+### ConfigReader
 
-```text
-src/test/resources/config.properties
-```
-
-Example:
-
-```properties
-explicit.wait=10
-```
-
-The timeout is read through `ConfigReader`, allowing the value to be changed without modifying page-object code.
-
----
-
-### `ConfigReader`
-
-Centralizes application and framework configuration.
-
-Example:
+Centralizes framework configuration such as:
 
 ```properties
 browser=chrome
@@ -191,49 +174,42 @@ url=https://www.saucedemo.com/
 explicit.wait=10
 ```
 
-The framework provides typed configuration access for integer-based properties such as the explicit wait timeout.
+Configuration values can be changed without modifying the page-object implementation.
 
----
+### ScreenshotUtils
 
-### `ScreenshotUtils`
+Provides screenshot capture functionality for failure diagnostics.
 
-Provides screenshot capture functionality used for failure diagnostics.
+### TestListener
 
-Screenshots help with:
-
-* Failure investigation
-* Debugging
-* Test execution analysis
-
----
-
-### `TestListener`
-
-A TestNG listener used to monitor test execution and trigger screenshot capture when tests fail.
+A TestNG listener that monitors test execution and triggers screenshot capture when a test fails.
 
 ---
 
 # 🧪 Test Coverage
 
-The framework currently contains the following test categories.
-
-## Login Smoke Testing
+## Login Smoke Test
 
 `LoginSmokeTest.java`
 
-Covers the basic login functionality to quickly verify that the application is available and the primary login flow is working.
+Validates the basic login flow and verifies that the application is available and the primary login functionality is working.
 
-## Login Testing
+## Login Tests
 
 `LoginTest.java`
 
-Contains login-related scenarios, including negative test cases and data-driven test execution where applicable.
+Covers login-related scenarios including:
 
-## End-to-End Purchase Testing
+* Valid login
+* Invalid login
+* Negative test scenarios
+* Data-driven execution where applicable
+
+## End-to-End Purchase Test
 
 `EndToEndPurchaseTest.java`
 
-Validates the complete purchase flow:
+Validates the complete purchase workflow:
 
 ```text
 Login
@@ -267,7 +243,7 @@ url=https://www.saucedemo.com/
 explicit.wait=10
 ```
 
-## Configurable Explicit Wait
+### Configurable Explicit Wait
 
 The explicit wait timeout is externalized from the Java implementation.
 
@@ -285,45 +261,19 @@ explicit.wait=20
 
 without modifying `BasePage.java`.
 
-The framework reads the configured value at runtime through `ConfigReader`.
-
 ---
 
 # ▶️ Running the Tests
 
-## Option 1 — Run an Individual Test in Eclipse
+## 1. Run from Eclipse
 
-To run a specific test:
-
-1. Open the required test class.
-2. Right-click the test method or test class.
-3. Select:
+Open the required test class and select:
 
 ```text
 Run As → TestNG Test
 ```
 
-This is useful during development when working on a specific test.
-
----
-
-## Option 2 — Run the Complete TestNG Suite
-
-The framework contains:
-
-```text
-testng.xml
-```
-
-The suite includes:
-
-```xml
-<class name="com.saucedemo.tests.LoginSmokeTest" />
-<class name="com.saucedemo.tests.LoginTest" />
-<class name="com.saucedemo.tests.EndToEndPurchaseTest" />
-```
-
-To execute the complete suite in Eclipse:
+To execute the complete suite:
 
 ```text
 Right-click testng.xml
@@ -333,17 +283,9 @@ Run As
 TestNG Suite
 ```
 
-The suite has been locally verified with:
-
-```text
-Total tests run: 8
-Failures: 0
-Skips: 0
-```
-
 ---
 
-## Option 3 — Run Using Maven
+## 2. Run with Maven
 
 From the project root:
 
@@ -351,13 +293,57 @@ From the project root:
 mvn clean test
 ```
 
-> Maven execution depends on the project's `pom.xml` configuration. The TestNG suite can be executed directly from Eclipse using `testng.xml`.
+---
+
+## 3. Run Smoke Tests
+
+```bash
+mvn test -Dgroups=smoke
+```
 
 ---
 
-# 🔍 Design Principles
+## 4. Run Regression Tests
 
-The framework is designed around the following principles:
+```bash
+mvn test -Dgroups=regression
+```
+
+---
+
+## 5. Run with Chrome
+
+```bash
+mvn test -Dbrowser=chrome
+```
+
+---
+
+## 6. Run in Headless Mode
+
+```bash
+mvn test -Dbrowser=chrome -Dheadless=true
+```
+
+Headless execution allows the test suite to run without opening the browser UI.
+
+---
+
+# 📊 Test Execution
+
+The complete TestNG suite has been locally verified with:
+
+```text
+Total tests run: 8
+Failures: 0
+Skips: 0
+```
+
+The result above represents a local execution of the current test suite and may change as additional tests are added.
+
+---
+
+# 🧩 Design Principles
 
 ### 1. Separation of Concerns
 
@@ -369,81 +355,82 @@ Common Selenium operations are centralized in `BasePage`.
 
 ### 3. Maintainability
 
-Locators and page-specific interactions are maintained inside dedicated page classes.
+Page-specific locators and interactions are maintained inside dedicated page classes.
 
 ### 4. Centralized Configuration
 
-Framework configuration is maintained outside Java source code.
+Application and framework settings are maintained outside the Java implementation.
 
 ### 5. Thread-Safe Driver Management
 
-`ThreadLocal<WebDriver>` provides a foundation for managing independent browser instances across execution threads.
+`ThreadLocal<WebDriver>` provides isolated driver instances for execution threads.
 
 ### 6. Failure Diagnostics
 
-Automatic screenshots are captured when tests fail.
+Screenshots are automatically captured when tests fail.
 
 ---
 
-# 📌 Current Framework Capabilities
+# ✅ Current Framework Capabilities
 
-| Capability                       | Status            |
-| -------------------------------- | ----------------- |
-| Selenium WebDriver               | ✅ Implemented     |
-| Java                             | ✅ Implemented     |
-| TestNG                           | ✅ Implemented     |
-| Maven                            | ✅ Implemented     |
-| Page Object Model                | ✅ Implemented     |
-| Base Page                        | ✅ Implemented     |
-| Explicit Waits                   | ✅ Implemented     |
-| Configurable Explicit Wait       | ✅ Implemented     |
-| Centralized Configuration        | ✅ Implemented     |
-| ThreadLocal WebDriver            | ✅ Implemented     |
-| Data-Driven Testing              | ✅ Implemented     |
-| Failure Screenshots              | ✅ Implemented     |
-| TestNG Listener                  | ✅ Implemented     |
-| TestNG Suite                     | ✅ Implemented     |
-| Smoke Testing                    | ✅ Implemented     |
-| Negative Testing                 | ✅ Implemented     |
-| End-to-End Testing               | ✅ Implemented     |
-| Headless Execution               | ❌ Not implemented |
-| CI/CD Pipeline                   | ❌ Not implemented |
-| Advanced Reporting               | ❌ Not implemented |
-| Parallel Execution Configuration | ❌ Not implemented |
+| Capability                       | Status    |
+| -------------------------------- | --------- |
+| Selenium WebDriver               | ✅         |
+| Java                             | ✅         |
+| TestNG                           | ✅         |
+| Maven                            | ✅         |
+| Page Object Model                | ✅         |
+| Base Page                        | ✅         |
+| Explicit Waits                   | ✅         |
+| Centralized Configuration        | ✅         |
+| ThreadLocal WebDriver            | ✅         |
+| Data-Driven Testing              | ✅         |
+| Failure Screenshots              | ✅         |
+| TestNG Listener                  | ✅         |
+| TestNG Suites                    | ✅         |
+| Smoke Testing                    | ✅         |
+| Negative Testing                 | ✅         |
+| End-to-End Testing               | ✅         |
+| Headless Execution               | ✅         |
+| Maven CLI Execution              | ✅         |
+| GitHub Actions CI/CD             | ⏳ Planned |
+| Advanced Reporting               | ⏳ Planned |
+| Parallel Execution Configuration | ⏳ Planned |
+| Cross-Browser Execution          | ⏳ Planned |
 
 ---
 
-# 🗺️ Future Enhancements
+# 🗺️ Planned Enhancements
 
-The framework can be further enhanced with:
+The framework will be enhanced incrementally with:
 
-* Configurable **headless browser execution**
-* Browser selection for multiple browsers
-* Improved generic product and cart methods
-* Parallel test execution
 * GitHub Actions CI/CD integration
-* Advanced reporting using Extent Reports or Allure
-* Improved test data management
-* Additional API test automation
-* Cross-browser execution
+* Improved cross-browser configuration
+* Parallel test execution
+* Advanced reporting
+* Additional end-to-end scenarios
+* Improved test-data management
 * Environment-specific configuration
-
-These features will be added incrementally as the framework evolves.
+* API test integration where appropriate
 
 ---
 
-# 🧹 Git & Version Control
+# 🌱 Learning & Development Focus
 
-The project uses Git for version control.
+This project is continuously improved to demonstrate practical skills in:
 
-Typical workflow:
+* UI test automation
+* Selenium framework design
+* Page Object Model
+* TestNG
+* Maven
+* Configuration management
+* Failure diagnostics
+* Git and GitHub
+* CI/CD
+* Maintainable test automation
 
-```bash
-git status
-git add .
-git commit -m "Make explicit wait timeout configurable"
-git push origin main
-```
+The project is intentionally developed incrementally, with framework improvements tracked through Git commits.
 
 ---
 
@@ -459,18 +446,17 @@ QA Automation Engineer / SDET
 * Selenium WebDriver
 * Playwright
 * Java
+* JavaScript / TypeScript
 * TestNG
 * API Testing
-* Performance Testing
+* k6 Performance Testing
 * CI/CD
 * Software Quality Engineering
 
 ---
 
-# ⭐ Project Goals
+## ⭐ Project Goal
 
-This project is continuously evolving to demonstrate practical test automation framework design, maintainability, reusability, and modern QA engineering practices.
+The goal of this project is to demonstrate the ability to **design, build, maintain, refactor, and continuously improve a UI automation framework**, rather than simply writing individual Selenium tests.
 
-The framework is intentionally improved incrementally, with each enhancement tracked through Git commits.
-
-The goal is to demonstrate not only the ability to write automated tests, but also the ability to **design, refactor, maintain, and continuously improve an automation framework**.
+---
